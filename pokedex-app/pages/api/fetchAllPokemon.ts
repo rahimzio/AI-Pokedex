@@ -1,40 +1,41 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-//We define a Type to have a better structure for the Data that we get from the API
-type PokemonData = {
+interface PokemonData {
+  id: number;
   name: string;
-  url: string;
-  spritesUrl:string;
-  index: number;
-  details?: any;
-}[];
+  types: string[];
+  sprite: string;
+}
 
-//the Function fetches the API Data in atry catch into a JSON and Converts the JSON Data into The Type Data we defined before
-export default async (req: NextApiRequest, res: NextApiResponse) => 
-{
-    try{
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
-        const data = await response.json();
-        const poke : PokemonData[]= data.results;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const page = Number(req.query.page) || 1;
+  const limit = 20;
+  const offset = (page - 1) * limit;
 
-        const pokeData: PokemonData[] = await Promise.all(data.results.map(async (pokemon:any, index:number) => {
-      const detailsResponse = await fetch(pokemon.url);
-      const details = await detailsResponse.json();
-      return {
-        name: pokemon.name,
-        url: pokemon.url,
-        index: index + 1,
-        details: details
-      };
-    }));
-    
-        console.log('recieved pokemon data: ', response);
-        res.status(200).json(poke as any);
-    }
-    catch
-    {
-        console.log('failed to fetch pokemon');
-        
-        res.status(500);
-    }
+  try {
+    const pokemonList = await Promise.all(
+      Array.from({ length: limit }, (_, i) => i + offset + 1)
+        .filter(id => id <= 151)
+        .map(async (id) => {
+          const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+          const data = await response.json();
+          return {
+            id: data.id,
+            name: data.name,
+            types: data.types.map((type: any) => type.type.name),
+            sprite: data.sprites.front_default,
+          };
+        })
+    );
+
+    res.status(200).json({
+      results: pokemonList,
+      next: offset + limit < 151 ? `/api/fetchAllPokemon?page=${page + 1}` : null,
+      previous: page > 1 ? `/api/fetchAllPokemon?page=${page - 1}` : null,
+      total: 151
+    });
+  } catch (error) {
+    console.error('Failed to fetch pokemon:', error);
+    res.status(500).json({ error: 'Failed to fetch pokemon' });
+  }
 }
