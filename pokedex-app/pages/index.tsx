@@ -7,6 +7,7 @@ import setAllPokemon from '../pages/pokemontable/poketable';
 const inter = Inter({ subsets: ["latin"] });
 
 
+
 export default function Home() {
   return (
   <section>

@@ -4,8 +4,12 @@ interface PokemonData {
   id: number;
   name: string;
   types: string[];
+  stats:number[];
   sprite: string;
 }
+
+
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const page = Number(req.query.page) || 1;
@@ -15,16 +19,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const pokemonList = await Promise.all(
       Array.from({ length: limit }, (_, i) => i + offset + 1)
-        .filter(id => id <= 151)
+        .filter(id => id <= 1025)
         .map(async (id) => {
           const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
           const data = await response.json();
+         
           return {
             id: data.id,
             name: data.name,
             types: data.types.map((type: any) => type.type.name),
             sprite: data.sprites.front_default,
-          };
+            stats:data.stats.map((stat:any ) => stat.base_stat),
+             };
         })
     );
 

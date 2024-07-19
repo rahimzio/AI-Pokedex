@@ -1,10 +1,13 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import PokemonDetail from '../pokemondetails';
 
 interface PokemonData {
   id: number;
   name: string;
   types: string[];
+  stats: number[];
   sprite: string;
 }
 
@@ -15,11 +18,21 @@ interface ApiResponse {
   total: number;
 }
 
+const allTypes = [
+  'normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison',
+  'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark',
+  'steel', 'fairy'
+];
+
 const Pokemontable: React.FC = () => {
   const [pokeData, setPokeData] = useState<PokemonData[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
+  const [sortOption, setSortOption] = useState<string>('smallest');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [filteredData, setFilteredData] = useState<PokemonData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,10 +52,53 @@ const Pokemontable: React.FC = () => {
     fetchData();
   }, [currentPage]);
 
+  useEffect(() => {
+    sortAndFilterPokemons();
+  }, [sortOption, filterType, pokeData]);
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo(0, 0);
   };
+
+  const handlePokemonClick = (pokemon: PokemonData) => {
+    setSelectedPokemon(pokemon);
+  };
+
+  const handleBack = () => {
+    setSelectedPokemon(null);
+  };
+
+  const sortAndFilterPokemons = () => {
+    let tempData = [...pokeData];
+    if (filterType !== 'all') {
+      tempData = tempData.filter(pokemon => pokemon.types.includes(filterType));
+    }
+    tempData = tempData.sort((a, b) => {
+      if (sortOption === 'smallest') {
+        return a.id - b.id;
+      } else if (sortOption === 'largest') {
+        return b.id - a.id;
+      } else if (sortOption === 'alphabetical') {
+        return a.name.localeCompare(b.name);
+      }
+      return 0;
+    });
+    setFilteredData(tempData);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(event.target.value);
+  };
+
+  const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterType(event.target.value);
+  };
+
+  if (selectedPokemon) {
+    console.log(selectedPokemon);
+    return <PokemonDetail pokemon={selectedPokemon} onBack={handleBack} />;
+  }
 
   if (isLoading) return <p className="text-center mt-8">Loading Pokémon data...</p>;
   if (!pokeData.length) return <p className="text-center mt-8">No Pokémon data available</p>;
@@ -50,9 +106,28 @@ const Pokemontable: React.FC = () => {
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-3xl font-bold text-center my-8">Kanto Pokédex</h1>
+      <div>
+        <h3 className="text-2xl font-bold text-center mt-6">Sortieren nach</h3>
+        <div className='text-center mb-6 color-b'>
+          <select id='sortMenu' value={sortOption} onChange={handleChange}>
+            <option value="smallest">kleinste Nummer</option>
+            <option value="largest">größte Nummer</option>
+            <option value="alphabetical">A bis Z</option>
+          </select>
+        </div>
+        <h3 className="text-2xl font-bold text-center mt-6 ">Filtern nach Typ</h3>
+        <div className='text-center mb-6 color-b'>
+          <select id='filterMenu' value={filterType} onChange={handleTypeChange}>
+            <option value="all">Alle Typen</option>
+            {allTypes.map(type => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {pokeData.map((pokemon) => (
-          <div key={pokemon.id} className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center">
+        {filteredData.map((pokemon) => (
+          <div key={pokemon.id} onClick={() => handlePokemonClick(pokemon)}  className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center">
             <Image
               src={pokemon.sprite}
               alt={pokemon.name}
@@ -61,7 +136,7 @@ const Pokemontable: React.FC = () => {
               className="w-24 h-24 object-contain"
             />
             <p className="text-gray-500 mt-2">#{pokemon.id.toString().padStart(3, '0')}</p>
-            <h2 className="text-xl font-semibold mt-2 capitalize">{pokemon.name}</h2>
+            <h2 className="text-xl font-semibold mt-2 capitalize color-b">{pokemon.name}</h2>
             <div className="flex mt-2">
               {pokemon.types.map((type) => (
                 <span

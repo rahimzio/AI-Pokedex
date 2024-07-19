@@ -31,3 +31,28 @@ body {
     text-wrap: balance;
   }
 }
+
+.aling-center{
+  text-align: center;
+}
+
+ul {
+  list-style-type: none !important;
+}
+
+.flex-col{
+  display: flex;
+  flex-direction: column;
+}
+
+.color-b{
+  color: black;
+}
+
+.stats-d{
+  background: grey;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-around;
+}
