@@ -13,7 +13,7 @@ export default function Home() {
     setIsPokemonTableLoaded(true);
   };
   loadPokemonTable();
-  
+
   useEffect(() => {
     const loadPokemonData = async () => {
       try {
@@ -40,10 +40,10 @@ export default function Home() {
       setButtonMessage('Pokedexchat');
     }
   }
-//     {isPokemonTableLoaded && <button className="switch-btn" onClick={changeView}>Switch to {buttonMessage}</button>}
+
   return (
     <section>
-      {isPokemonTableLoaded && <button onClick={changeView}>Switch to {buttonMessage}</button>}
+      {isPokemonTableLoaded && <button className="transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300" onClick={changeView}>Switch to {buttonMessage}</button>}
       {!isChatOpen && <Pokemontable />}
       {isPokemonTableLoaded && isChatOpen && <Chatbar />}
     </section>

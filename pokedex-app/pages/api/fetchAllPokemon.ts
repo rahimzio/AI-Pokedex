@@ -23,8 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             types: data.types.map((type: any) => type.type.name),
             sprite: data.sprites.front_default,
             stats: data.stats.map((stat: any) => stat.base_stat),
-            weight: data.weight,
-            height: data.height,
+            weight: data.weight/10,
+            height: data.height/10,
           };
         })
     );

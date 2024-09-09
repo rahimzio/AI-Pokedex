@@ -6,6 +6,30 @@ import LoadingComponent from '@/components/loading';
 import { types } from 'util';
 
 
+export function getTypeColor(type: string): string {
+  const colors: { [key: string]: string } = {
+    normal: 'bg-gray-300',
+    fire: 'bg-red-500 text-white',
+    water: 'bg-blue-500 text-white',
+    electric: 'bg-yellow-400',
+    grass: 'bg-green-500 text-white',
+    ice: 'bg-blue-200',
+    fighting: 'bg-red-700 text-white',
+    poison: 'bg-purple-500 text-white',
+    ground: 'bg-yellow-600 text-white',
+    flying: 'bg-indigo-300',
+    psychic: 'bg-pink-500 text-white',
+    bug: 'bg-green-400',
+    rock: 'bg-yellow-700 text-white',
+    ghost: 'bg-purple-700 text-white',
+    dragon: 'bg-indigo-700 text-white',
+    dark: 'bg-gray-700 text-white',
+    steel: 'bg-gray-400',
+    fairy: 'bg-pink-300',
+  };
+  return colors[type.toLowerCase()] || 'bg-gray-300';
+}
+
 const allTypes = [
   'normal', 'fire', 'water', 'electric', 'grass', 'ice', 'fighting', 'poison',
   'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'dark',
@@ -23,30 +47,6 @@ const Pokemontable: React.FC = () => {
   const [nextBatch, setNextBatch] = useState<number>(1); 
   const shouldShowLoadMoreButton = pokeData.length < 151;
   const newPokemonData: PokemonData[] = [];
-
-  function getTypeColor(type: string): string {
-    const colors: { [key: string]: string } = {
-      normal: 'bg-gray-300',
-      fire: 'bg-red-500 text-white',
-      water: 'bg-blue-500 text-white',
-      electric: 'bg-yellow-400',
-      grass: 'bg-green-500 text-white',
-      ice: 'bg-blue-200',
-      fighting: 'bg-red-700 text-white',
-      poison: 'bg-purple-500 text-white',
-      ground: 'bg-yellow-600 text-white',
-      flying: 'bg-indigo-300',
-      psychic: 'bg-pink-500 text-white',
-      bug: 'bg-green-400',
-      rock: 'bg-yellow-700 text-white',
-      ghost: 'bg-purple-700 text-white',
-      dragon: 'bg-indigo-700 text-white',
-      dark: 'bg-gray-700 text-white',
-      steel: 'bg-gray-400',
-      fairy: 'bg-pink-300',
-    };
-    return colors[type.toLowerCase()] || 'bg-gray-300';
-  }
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -234,7 +234,7 @@ const Pokemontable: React.FC = () => {
         <div className="flex justify-center mt-8">
           <button
             onClick={loadMorePokemon}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="animate-bounce bg-blue-500 text-white px-4 py-2 rounded transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300"
           >
             Load More Pokémon
           </button>
@@ -242,7 +242,7 @@ const Pokemontable: React.FC = () => {
       )}
   
       <div className="updateBnt">
-        <button onClick={UpdateLocalData} className='mt-10'>
+        <button onClick={UpdateLocalData} className='mt-10 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300'>
           <div className="flex items-center">
             <img src="/update.png" alt="Update icon" />
             <p>Update Pokémon Data</p>

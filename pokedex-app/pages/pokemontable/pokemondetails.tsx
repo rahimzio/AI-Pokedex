@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { types } from 'util';
-
+import { getTypeColor } from './poketable';
 const statsLabels: { [key: string]: string } = {
   hp: 'HP',
   attack: 'Attack',
@@ -41,30 +41,6 @@ function getWeaknesses(types: string[]): string[] {
   });
 
   return Array.from(weaknessesSet);
-}
-
-function getTypeColor(type: string): string {
-const colors: { [key: string]: string } = {
-  normal: 'bg-gray-300',
-  fire: 'bg-red-500 text-white',
-  water: 'bg-blue-500 text-white',
-  electric: 'bg-yellow-400',
-  grass: 'bg-green-500 text-white',
-  ice: 'bg-blue-200',
-  fighting: 'bg-red-700 text-white',
-  poison: 'bg-purple-500 text-white',
-  ground: 'bg-yellow-600 text-white',
-  flying: 'bg-indigo-300',
-  psychic: 'bg-pink-500 text-white',
-  bug: 'bg-green-400',
-  rock: 'bg-yellow-700 text-white',
-  ghost: 'bg-purple-700 text-white',
-  dragon: 'bg-indigo-700 text-white',
-  dark: 'bg-gray-700 text-white',
-  steel: 'bg-gray-400',
-  fairy: 'bg-pink-300',
-};
-return colors[type.toLowerCase()] || 'bg-gray-300';
 }
 
 const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onBack }) => {

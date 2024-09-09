@@ -72,7 +72,7 @@ const Chatbar: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="input-area">
+      <div className="input-area pointer-events-auto">
         <input
           type="text"
           id="input"

@@ -137,6 +137,7 @@ ul {
 .message.system {
   background-color: #f1f1f1;
   color: black;
+  border-radius: 20px;
 }
 
 .input-area {
